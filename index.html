@@ -9,13 +9,46 @@
         padding: 0px 0px 0px 0px;
         margin: 0px 0px 0px 0px;
       }
+      #myRange {
+        float: right;
+        margin-top: 40px;
+        margin-right: 60px;
+      }
+      #demo {
+        float: right;
+        margin-top: 30px;
+        margin-right: 10px;
+      }
     </style>
   </head>
 
   <body>
+    <div>
+      <input type="range" id="myRange" min="1" max="50" value="5" />
+      <h1 id="demo"></h1>
+    </div>
+
     <script src="three.js"></script>
     <script src="OrbitControls.js"></script>
     <script>
+      //Function for Dimension and Texture of Sphere
+      function Sphere(vec, material, scene, geometry, renderWireframe) {
+        this.geometry = typeof geometry === "undefined" ? sphere : geometry;
+        this.mesh = new THREE.Mesh(this.geometry, material);
+        if (typeof renderWireframe === "undefined" || !renderWireframe) {
+          scene.add(this.mesh);
+        } else {
+          var geometry = new THREE.SphereGeometry(1, 15, 15);
+          var material = new THREE.MeshBasicMaterial({ color: 0xffffff });
+
+          scene.add(new THREE.Mesh(geometry, material));
+        }
+
+        this.setPosition = function (vec) {
+          this.mesh.position.set(vec.x, vec.y, vec.z);
+        };
+      }
+
       //Function for Dimension and Texture of Cubes
       function Cube(vec, material, scene, geometry, renderWireframe) {
         this.geometry = typeof geometry === "undefined" ? cube : geometry;
@@ -36,8 +69,8 @@
       function randInRange(a, b) {
         return a + Math.floor((b - a) * Math.random());
       }
-      // Variable and Constructor Declaration
 
+      // Variable and Constructor Declaration
       var WIDTH = window.innerWidth,
         HEIGHT = window.innerHeight;
       var aspectRatio = WIDTH / HEIGHT;
@@ -47,7 +80,7 @@
       var controls = new THREE.OrbitControls(camera, renderer.domElement);
       controls.enableKeys = false;
 
-      var mov = 5;
+      var mov = SpeedChanger();
       var delta = 1 / mov;
       var theta = 0.0,
         edgeSize = 20,
@@ -55,7 +88,7 @@
       var cubeSize = edgeSize + (edgeSize - 1) * padding;
       var halfCubeSize = cubeSize / 2;
 
-      var BACKGROUND_COLOR = 0x000000,
+      var BACKGROUND_COLOR = 0xffffff,
         BODY_COLOR = 0x388e3c,
         APPLE_COLOR = 0xc62828,
         HEAD_COLOR = 0x004d40,
@@ -66,14 +99,23 @@
         new THREE.Vector3(-20, 15, 20),
         new THREE.Vector3(20, -15, 0),
       ];
+
       var keysQueue = [],
         snake = [],
         cube = new THREE.BoxGeometry(1, 1, 1);
+      var sphere = new THREE.SphereGeometry(0.5, 10, 10);
       var gameCube = new THREE.BoxGeometry(cubeSize, cubeSize, cubeSize);
       var direction = new THREE.Vector3(1, 0, 0);
       var text = document.createElement("div");
       var clock = new THREE.Clock();
       var theta = 0;
+
+      // Function to change the speed of the Snake
+      function SpeedChanger() {
+        var x = document.getElementById("myRange").value;
+        document.getElementById("demo").innerHTML = x;
+        return x;
+      }
 
       //Function for displaying the Geometry of the cube and camera position
       function init() {
@@ -109,8 +151,10 @@
         var appleMaterial = new THREE.MeshPhongMaterial({
           color: APPLE_COLOR,
         });
-        apple = new Cube(spawnAppleVector(), appleMaterial, scene);
-        var edgeMaterial = new THREE.LineBasicMaterial({ color: 0xffffff });
+
+        apple = new Sphere(spawnAppleVector(), appleMaterial, scene);
+
+        var edgeMaterial = new THREE.LineBasicMaterial({ color: 0x000000 });
         new Cube(
           new THREE.Vector3(0, 0, 0),
           edgeMaterial,
@@ -131,7 +175,7 @@
         render();
       }
 
-      //   Creating Random food position of the Snake
+      // Creating Random food position of the Snake
       function spawnAppleVector() {
         var x = randInRange(0, edgeSize - 1),
           y = randInRange(0, edgeSize - 1),
@@ -168,7 +212,7 @@
       function render() {
         requestAnimationFrame(render);
         theta += clock.getDelta();
-        if (theta > delta) {
+        if (theta > 1 / SpeedChanger()) {
           var tail = snake.shift();
           var head = snake[snake.length - 1];
 
@@ -212,6 +256,28 @@
               )
             );
           }
+
+          //Black Hole Idea starts
+          if (
+            head.mesh.position.x == 0.25 ||
+            head.mesh.position.y == 0.25 ||
+            head.mesh.position.z == 0.25
+          ) {
+            head.mesh.position.x == 0.75;
+            head.mesh.position.y == 0.75;
+            head.mesh.position.z == 0.75;
+          }
+          if (
+            head.mesh.position.x == 0.75 ||
+            head.mesh.position.y == 0.75 ||
+            head.mesh.position.z == 0.75
+          ) {
+            head.mesh.position.x == 0.25;
+            head.mesh.position.y == 0.25;
+            head.mesh.position.z == 0.25;
+          }
+          //Black Hole Idea ends
+
           if (head.mesh.position.x < -halfCubeSize) {
             head.mesh.position.x = halfCubeSize - 0.5;
           }
@@ -234,6 +300,7 @@
         }
         renderer.render(scene, camera);
       }
+
       //Function to resize the cube at Center when browser is resized.
       function onWindowResize() {
         camera.aspec = window.innerWidth / window.innerHeight;
