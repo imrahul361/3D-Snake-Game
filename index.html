@@ -258,24 +258,45 @@
           }
 
           //Black Hole Idea starts
-          if (
-            head.mesh.position.x == 0.25 ||
-            head.mesh.position.y == 0.25 ||
-            head.mesh.position.z == 0.25
-          ) {
-            head.mesh.position.x == 0.75;
-            head.mesh.position.y == 0.75;
-            head.mesh.position.z == 0.75;
-          }
-          if (
-            head.mesh.position.x == 0.75 ||
-            head.mesh.position.y == 0.75 ||
-            head.mesh.position.z == 0.75
-          ) {
-            head.mesh.position.x == 0.25;
-            head.mesh.position.y == 0.25;
-            head.mesh.position.z == 0.25;
-          }
+           // if (
+          //   head.mesh.position.x === 0.25 * edgeSize &&
+          //   head.mesh.position.y === 0.25 * edgeSize &&
+          //   head.mesh.position.z === 0.25 * edgeSize
+          // ) {
+          //   (head.mesh.position.x = edgeSize * 0.75),
+          //     (head.mesh.position.y = edgeSize * 0.75),
+          //     head.mesh.position.z === edgeSize * 0.75;
+          //   var newPosition = new THREE.Vector3(
+          //     head.mesh.position.x +
+          //       direction.x +
+          //       Math.sign(direction.x) * padding,
+          //     head.mesh.position.y +
+          //       direction.y +
+          //       Math.sign(direction.y) * padding,
+          //     head.mesh.position.z +
+          //       direction.z +
+          //       Math.sign(direction.z) * padding
+          //   );
+          // } else if (
+          //   head.mesh.position.x === 0.75 * edgeSize &&
+          //   head.mesh.position.y === 0.75 * edgeSize &&
+          //   head.mesh.position.z === 0.75 * edgeSize
+          // ) {
+          //   (head.mesh.position.x = edgeSize * 0.25),
+          //     (head.mesh.position.y = edgeSize * 0.25),
+          //     (head.mesh.position.z = edgeSize * 0.25);
+          //   var newPosition = new THREE.Vector3(
+          //     head.mesh.position.x +
+          //       direction.x +
+          //       Math.sign(direction.x) * padding,
+          //     head.mesh.position.y +
+          //       direction.y +
+          //       Math.sign(direction.y) * padding,
+          //     head.mesh.position.z +
+          //       direction.z +
+          //       Math.sign(direction.z) * padding
+          //   );
+          // }
           //Black Hole Idea ends
 
           if (head.mesh.position.x < -halfCubeSize) {
